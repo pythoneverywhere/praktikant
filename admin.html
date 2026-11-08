@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0d0c0a">
+  <script src="theme.js?v=20261108"></script>
+  <title>Админ-панель — Практика Онлайн</title>
+  <link rel="icon" type="image/png" href="./immages/Логотип.png">
+  <style>
+    :root {
+      --radius: 20px;
+      --radius-sm: 14px;
+      --max: 1220px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        var(--bg);
+      min-height: 100vh;
+    }
+    .container { width: min(100% - 28px, var(--max)); margin-inline: auto; }
+    header {
+      position: sticky;
+      top: 0;
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: none;
+      z-index: 20;
+    }
+    .header-wrap {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .brand img { width: clamp(160px, 22vw, 220px); height: 44px; object-fit: contain; }
+    .actions { display: flex; gap: 10px; align-items: center; }
+    .actions a {
+      text-decoration: none;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    .actions a:hover { color: var(--text); border-color: var(--brand); }
+    main { padding: 24px 0 36px; }
+    h1 { font-size: clamp(1.35rem, 2.8vw, 2rem); margin-bottom: 8px; }
+    .sub { color: var(--muted); margin-bottom: 18px; }
+    .tabs { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+    .tab-btn {
+      border: 1px solid var(--line-strong);
+      border-radius: 10px;
+      background: var(--surface-2);
+      color: var(--accent);
+      padding: 9px 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      color: #1a1307;
+      border: none;
+      background: var(--brand);
+    }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .toolbar {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .toolbar.short { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .toolbar input,
+    .toolbar select,
+    .toolbar textarea {
+      border-radius: 10px;
+      border: 1px solid var(--line-strong);
+      background: var(--surface-2);
+      color: var(--text);
+      padding: 10px 12px;
+      font-size: 0.92rem;
+      outline: none;
+      width: 100%;
+    }
+    .toolbar button {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: #1a1307;
+      background: var(--brand);
+    }
+    .state {
+      margin-bottom: 14px;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.92rem;
+      display: none;
+    }
+    .state.ok { background: var(--ok-soft); border: 1px solid var(--ok); color: var(--ok-text); }
+    .state.err { background: var(--err-soft); border: 1px solid var(--err); color: var(--err-text); }
+    .list { display: grid; gap: 12px; }
+    .item {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      box-shadow: none;
+      padding: 16px;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .cell { background: var(--surface-2); border-radius: 10px; padding: 10px; }
+    .label { color: var(--muted); font-size: 0.82rem; margin-bottom: 3px; }
+    .value { font-size: 0.92rem; word-break: break-word; }
+    .bottom { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-top: 6px; }
+    .mini-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    select, button, textarea, input {
+      border-radius: 10px;
+      border: 1px solid var(--line-strong);
+      background: var(--surface-2);
+      color: var(--text);
+      padding: 9px 11px;
+      font-size: 0.92rem;
+    }
+    button.primary {
+      cursor: pointer;
+      color: #1a1307;
+      font-weight: 700;
+      background: var(--brand);
+      border: none;
+    }
+    button.danger {
+      cursor: pointer;
+      color: var(--err-text);
+      background: var(--err-soft);
+      border: 1px solid var(--err);
+      font-weight: 700;
+    }
+    .timeline { margin-top: 8px; display: grid; gap: 6px; }
+    .timeline-item {
+      border-left: 2px solid var(--line-strong);
+      padding-left: 8px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .user-actions {
+      margin-top: 10px;
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+      display: none;
+    }
+    .user-actions.active {
+      display: grid;
+      gap: 8px;
+    }
+    .pagination {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .pager-buttons { display: flex; gap: 8px; align-items: center; }
+    .pager-buttons button[disabled] { opacity: 0.45; cursor: default; }
+    @media (max-width: 980px) {
+      .toolbar, .toolbar.short { grid-template-columns: 1fr; }
+      .row { grid-template-columns: 1fr; }
+      .header-wrap { height: auto; padding: 10px 0; flex-wrap: wrap; justify-content: center; }
+    }
+  </style>
+  <link rel="stylesheet" href="theme.css?v=20261108">
+</head>
+<body>
+  <header>
+    <div class="container header-wrap">
+      <a class="brand" href="index.html"><img src="./immages/Название.png" alt="Практикант Ру"></a>
+      <div class="actions">
+        <button class="theme-toggle" type="button" aria-label="Сменить тему"></button>
+        <a href="index.html">Главная</a>
+        <a href="#" id="logoutBtn">Выйти</a>
+      </div>
+    </div>
+  </header>
+  <main class="container">
+    <h1>Админ-панель</h1>
+    <p class="sub">Управление заявками практики, аккаунтами и заявками на вывод средств</p>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="practiceTab">Заявки практики</button>
+      <button class="tab-btn" data-tab="accountsTab">Аккаунты</button>
+      <button class="tab-btn" data-tab="withdrawalsTab">Заявки на вывод</button>
+      <button class="tab-btn" data-tab="promocodesTab">Промокоды</button>
+    </div>
+
+    <div id="ok" class="state ok"></div>
+    <div id="err" class="state err"></div>
+
+    <section id="practiceTab" class="panel active">
+      <div class="toolbar">
+        <input id="pSearchInput" type="text" placeholder="Поиск: имя, телефон, email, соцсети...">
+        <select id="pStatusFilter">
+          <option value="">Все статусы</option>
+          <option value="Ждёт подтверждения">Ждёт подтверждения</option>
+          <option value="Отклонена">Отклонена</option>
+          <option value="Активна">Активна</option>
+          <option value="Завершена">Завершена</option>
+        </select>
+        <select id="pTariffFilter">
+          <option value="">Все тарифы</option>
+          <option value="Старт">Старт</option>
+          <option value="PRO">PRO</option>
+          <option value="Эксперт">Эксперт</option>
+        </select>
+        <select id="pPromoFilter">
+          <option value="">Промокод: все</option>
+          <option value="with">Только с промокодом</option>
+          <option value="without">Без промокода</option>
+        </select>
+        <input id="pDateFromFilter" type="date" title="Дата от">
+        <input id="pDateToFilter" type="date" title="Дата до">
+        <select id="pPageSizeFilter">
+          <option value="10" selected>10 / стр</option>
+          <option value="20">20 / стр</option>
+          <option value="50">50 / стр</option>
+        </select>
+        <button id="pApplyFiltersBtn" type="button">Применить</button>
+      </div>
+      <div class="list" id="practiceList"></div>
+      <div class="pagination">
+        <div id="pPaginationInfo" class="value">Страница 1</div>
+        <div class="pager-buttons">
+          <button id="pPrevPageBtn" type="button">Назад</button>
+          <button id="pNextPageBtn" type="button">Вперёд</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="accountsTab" class="panel">
+      <div class="toolbar short">
+        <input id="uSearchInput" type="text" placeholder="Поиск: имя, email, телефон, промокод...">
+        <select id="uRoleFilter">
+          <option value="">Все роли</option>
+          <option value="user">user</option>
+          <option value="admin">admin</option>
+        </select>
+        <select id="uPageSizeFilter">
+          <option value="10" selected>10 / стр</option>
+          <option value="20">20 / стр</option>
+          <option value="50">50 / стр</option>
+        </select>
+        <button id="uApplyFiltersBtn" type="button">Применить</button>
+      </div>
+      <div class="list" id="usersList"></div>
+      <div class="pagination">
+        <div id="uPaginationInfo" class="value">Страница 1</div>
+        <div class="pager-buttons">
+          <button id="uPrevPageBtn" type="button">Назад</button>
+          <button id="uNextPageBtn" type="button">Вперёд</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="withdrawalsTab" class="panel">
+      <div class="toolbar short">
+        <input id="wSearchInput" type="text" placeholder="Поиск: пользователь, email, телефон, СБП...">
+        <select id="wStatusFilter">
+          <option value="">Все статусы</option>
+          <option value="pending">pending</option>
+          <option value="approved">approved</option>
+          <option value="rejected">rejected</option>
+        </select>
+        <select id="wPageSizeFilter">
+          <option value="10" selected>10 / стр</option>
+          <option value="20">20 / стр</option>
+          <option value="50">50 / стр</option>
+        </select>
+        <button id="wApplyFiltersBtn" type="button">Применить</button>
+      </div>
+      <div class="list" id="withdrawalsList"></div>
+      <div class="pagination">
+        <div id="wPaginationInfo" class="value">Страница 1</div>
+        <div class="pager-buttons">
+          <button id="wPrevPageBtn" type="button">Назад</button>
+          <button id="wNextPageBtn" type="button">Вперёд</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="promocodesTab" class="panel">
+      <div class="toolbar short">
+        <input id="pcSearchInput" type="text" placeholder="Поиск: промокод, владелец, email, телефон...">
+        <select id="pcFrozenFilter">
+          <option value="">Статус: все</option>
+          <option value="active">Только активные</option>
+          <option value="frozen">Только замороженные</option>
+        </select>
+        <select id="pcPageSizeFilter">
+          <option value="10" selected>10 / стр</option>
+          <option value="20">20 / стр</option>
+          <option value="50">50 / стр</option>
+        </select>
+        <button id="pcApplyFiltersBtn" type="button">Применить</button>
+      </div>
+      <div class="list" id="promocodesList"></div>
+      <div class="pagination">
+        <div id="pcPaginationInfo" class="value">Страница 1</div>
+        <div class="pager-buttons">
+          <button id="pcPrevPageBtn" type="button">Назад</button>
+          <button id="pcNextPageBtn" type="button">Вперёд</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="auth.js?v=20260421"></script>
+  <script>
+    const STATUSES = ["Ждёт подтверждения", "Отклонена", "Активна", "Завершена"];
+
+    const okEl = document.getElementById("ok");
+    const errEl = document.getElementById("err");
+
+    const practiceState = { page: 1, filters: { q: "", status: "", tariff: "", promo: "", dateFrom: "", dateTo: "", pageSize: 10 }, pagination: null };
+    const usersState = { page: 1, filters: { q: "", role: "", pageSize: 10 }, pagination: null };
+    const withdrawalsState = { page: 1, filters: { q: "", status: "", pageSize: 10 }, pagination: null };
+    const promoState = { page: 1, filters: { q: "", frozen: "", pageSize: 10 }, pagination: null };
+
+    function show(type, text) {
+      okEl.style.display = "none";
+      errEl.style.display = "none";
+      const el = type === "ok" ? okEl : errEl;
+      el.textContent = text;
+      el.style.display = "block";
+    }
+
+    function formatDate(value) {
+      if (!value) return "—";
+      const d = new Date(value);
+      return Number.isNaN(d.getTime()) ? value : d.toLocaleString("ru-RU");
+    }
+
+    function formatMoney(value) {
+      return `${Number(value || 0).toLocaleString("ru-RU")} ₽`;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function formatUserAction(action) {
+      const map = {
+        profile_updated: "Обновил профиль",
+        password_changed: "Сменил пароль",
+        application_created: "Создал заявку на подписку",
+        referral_code_created: "Создал промокод",
+        referral_card_bound: "Заполнил реквизиты СБП",
+        referral_withdraw_requested: "Создал заявку на вывод",
+        admin_updated_account: "Админ изменил данные аккаунта",
+      };
+      return map[action] || action || "Действие";
+    }
+
+    function actionMetaText(meta) {
+      if (!meta || typeof meta !== "object") return "";
+      const parts = [];
+      if (meta.tariff) parts.push(`тариф: ${meta.tariff}`);
+      if (meta.weeks) parts.push(`срок: ${meta.weeks} нед.`);
+      if (meta.totalPrice) parts.push(`сумма: ${formatMoney(meta.totalPrice)}`);
+      if (meta.promoCode) parts.push(`промокод: ${meta.promoCode}`);
+      if (meta.requestedAmount) parts.push(`вывод: ${formatMoney(meta.requestedAmount)}`);
+      if (meta.sbpNumber) parts.push(`СБП: ${meta.sbpNumber}`);
+      if (meta.changes && typeof meta.changes === "object") {
+        const fields = Object.keys(meta.changes);
+        if (fields.length) parts.push(`изменено: ${fields.join(", ")}`);
+      }
+      return parts.join(", ");
+    }
+
+    function freezeBadge(row) {
+      if (!row.isFrozen) return '<span class="value">Активен</span>';
+      const by = row.frozenBy?.name ? `, заморозил: ${escapeHtml(row.frozenBy.name)}` : "";
+      const note = row.freezeNote ? ` (${escapeHtml(row.freezeNote)})` : "";
+      return `<span class="value" style="color:var(--err-text);">Заморожен${by}${note}</span>`;
+    }
+
+    function updatePager(prefix, pagination) {
+      const page = pagination?.page || 1;
+      const totalPages = pagination?.totalPages || 1;
+      const total = pagination?.total || 0;
+      document.getElementById(`${prefix}PaginationInfo`).textContent = `Страница ${page} из ${totalPages} • Всего: ${total}`;
+      document.getElementById(`${prefix}PrevPageBtn`).disabled = page <= 1;
+      document.getElementById(`${prefix}NextPageBtn`).disabled = page >= totalPages;
+    }
+
+    function bindTabs() {
+      document.querySelectorAll(".tab-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const tab = btn.dataset.tab;
+          document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+          document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
+          btn.classList.add("active");
+          document.getElementById(tab).classList.add("active");
+        });
+      });
+    }
+
+    async function loadPractice() {
+      const result = await Auth.getAdminApplications({ ...practiceState.filters, page: practiceState.page });
+      if (!result.ok) { show("err", result.error); return; }
+      const listEl = document.getElementById("practiceList");
+      const items = result.applications || [];
+      if (!items.length) {
+        listEl.innerHTML = '<div class="item"><div class="value">Заявок пока нет.</div></div>';
+      } else {
+        listEl.innerHTML = items.map((a) => `
+          <article class="item" data-id="${a.id}">
+            <div class="row">
+              <div class="cell">
+                <div class="label">Пользователь</div>
+                <div class="value">${escapeHtml(a.user.name)}</div>
+                <div class="label" style="margin-top:8px">Email</div>
+                <div class="value">${escapeHtml(a.user.email || "—")}</div>
+                <div class="label" style="margin-top:8px">Телефон</div>
+                <div class="value">${escapeHtml(a.user.phone || "—")}</div>
+              </div>
+              <div class="cell">
+                <div class="label">Тариф и промо</div>
+                <div class="value">${escapeHtml(a.tariff)}</div>
+                <div class="label" style="margin-top:8px">Срок</div>
+                <div class="value">${escapeHtml(a.weeks)} нед.</div>
+                <div class="label" style="margin-top:8px">Промокод</div>
+                <div class="value">${escapeHtml(a.promoCode || "—")}</div>
+              </div>
+              <div class="cell">
+                <div class="label">Расчёт</div>
+                <div class="value">Неделя: ${formatMoney(a.weeklyPrice)}</div>
+                <div class="value">Скидка: ${a.promoDiscount ? ("-" + formatMoney(a.promoDiscount)) : "—"}</div>
+                <div class="value">Итого: ${formatMoney(a.totalPrice)}</div>
+                <div class="value">Реф. выплата: ${a.referralReward ? ("-" + formatMoney(a.referralReward)) : "—"}</div>
+              </div>
+              <div class="cell">
+                <div class="label">Контакты и даты</div>
+                <div class="value">${escapeHtml(a.socials || "—")}</div>
+                <div class="label" style="margin-top:8px">Практика</div>
+                <div class="value">${escapeHtml(formatDate(a.practiceStartAt))} - ${escapeHtml(formatDate(a.practiceEndAt))}</div>
+                <div class="label" style="margin-top:8px">Статус</div>
+                <div class="value">${escapeHtml(a.status)}</div>
+                <div class="label" style="margin-top:8px">Создана</div>
+                <div class="value">${escapeHtml(formatDate(a.createdAt))}</div>
+              </div>
+            </div>
+            <div class="timeline">
+              ${(a.history && a.history.length
+                ? a.history.map((h) => `<div class="timeline-item">${escapeHtml(formatDate(h.createdAt))} — ${escapeHtml(h.oldStatus ? (h.oldStatus + " -> ") : "")}${escapeHtml(h.newStatus)} ${h.note ? `(${escapeHtml(h.note)})` : ""}</div>`).join("")
+                : '<div class="timeline-item">История статусов отсутствует.</div>')}
+            </div>
+            <div class="bottom">
+              <div class="value">ID заявки: ${a.id}</div>
+              <div class="mini-actions">
+                <select class="status-select">
+                  ${STATUSES.map((s) => `<option value="${escapeHtml(s)}" ${s === a.status ? "selected" : ""}>${escapeHtml(s)}</option>`).join("")}
+                </select>
+                <button class="primary save-status-btn">Сохранить статус</button>
+              </div>
+            </div>
+          </article>
+        `).join("");
+      }
+
+      listEl.querySelectorAll(".save-status-btn").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const item = btn.closest(".item");
+          const id = Number(item.dataset.id);
+          const status = item.querySelector(".status-select").value;
+          const saveRes = await Auth.setApplicationStatus(id, status);
+          if (!saveRes.ok) { show("err", saveRes.error); return; }
+          show("ok", `Статус заявки #${id} обновлён`);
+          await loadPractice();
+        });
+      });
+
+      practiceState.pagination = result.pagination || {};
+      updatePager("p", practiceState.pagination);
+    }
+
+    async function loadUsers() {
+      const result = await Auth.getAdminUsers({ ...usersState.filters, page: usersState.page });
+      if (!result.ok) { show("err", result.error); return; }
+      const listEl = document.getElementById("usersList");
+      const items = result.users || [];
+      if (!items.length) {
+        listEl.innerHTML = '<div class="item"><div class="value">Аккаунтов не найдено.</div></div>';
+      } else {
+        listEl.innerHTML = items.map((u) => `
+          <article class="item" data-id="${u.id}">
+            <div class="row">
+              <div class="cell">
+                <div class="label">Имя</div>
+                <input class="u-name" value="${escapeHtml(u.name || "")}">
+                <div class="label" style="margin-top:8px">Email</div>
+                <input class="u-email" value="${escapeHtml(u.email || "")}">
+              </div>
+              <div class="cell">
+                <div class="label">Телефон</div>
+                <input class="u-phone" value="${escapeHtml(u.phone || "")}">
+                <div class="label" style="margin-top:8px">Роль</div>
+                <select class="u-role">
+                  <option value="user" ${u.role === "user" ? "selected" : ""}>user</option>
+                  <option value="admin" ${u.role === "admin" ? "selected" : ""}>admin</option>
+                </select>
+              </div>
+              <div class="cell">
+                <div class="label">Промокод</div>
+                <input class="u-ref" value="${escapeHtml(u.referralCode || "")}">
+                <div class="label" style="margin-top:8px">Email подтверждён</div>
+                <div class="value">${u.emailVerified ? "Да" : "Нет"}</div>
+              </div>
+              <div class="cell">
+                <div class="label">СБП для выплат</div>
+                <div class="value">${u.payoutCard ? escapeHtml(u.payoutCard.sbpNumber || "—") : "—"}</div>
+                <div class="label" style="margin-top:8px">Создан</div>
+                <div class="value">${escapeHtml(formatDate(u.createdAt))}</div>
+              </div>
+            </div>
+            <div class="bottom">
+              <div class="value">ID аккаунта: ${u.id}</div>
+              <div class="mini-actions">
+                <button class="primary save-user-btn">Сохранить</button>
+                <button class="primary toggle-actions-btn" type="button">Развернуть действия</button>
+                <button class="danger delete-user-btn">Удалить аккаунт</button>
+              </div>
+            </div>
+            <div class="user-actions">
+              <div class="timeline user-actions-list"><div class="timeline-item">Нажмите "Развернуть действия".</div></div>
+            </div>
+          </article>
+        `).join("");
+      }
+
+      listEl.querySelectorAll(".save-user-btn").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const item = btn.closest(".item");
+          const id = Number(item.dataset.id);
+          const payload = {
+            name: item.querySelector(".u-name").value.trim(),
+            email: item.querySelector(".u-email").value.trim(),
+            phone: item.querySelector(".u-phone").value.trim(),
+            role: item.querySelector(".u-role").value,
+            referralCode: item.querySelector(".u-ref").value.trim(),
+          };
+          const saveRes = await Auth.updateAdminUser(id, payload);
+          if (!saveRes.ok) { show("err", saveRes.error); return; }
+          show("ok", `Аккаунт #${id} обновлён`);
+          await loadUsers();
+        });
+      });
+
+      listEl.querySelectorAll(".delete-user-btn").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const item = btn.closest(".item");
+          const id = Number(item.dataset.id);
+          if (!confirm(`Удалить аккаунт #${id}? Действие необратимо.`)) return;
+          const delRes = await Auth.deleteAdminUser(id);
+          if (!delRes.ok) { show("err", delRes.error); return; }
+          show("ok", `Аккаунт #${id} удалён`);
+          await loadUsers();
+        });
+      });
+
+      listEl.querySelectorAll(".toggle-actions-btn").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const item = btn.closest(".item");
+          const id = Number(item.dataset.id);
+          const panel = item.querySelector(".user-actions");
+          const list = item.querySelector(".user-actions-list");
+          const isOpen = panel.classList.contains("active");
+          if (isOpen) {
+            panel.classList.remove("active");
+            btn.textContent = "Развернуть действия";
+            return;
+          }
+          panel.classList.add("active");
+          btn.textContent = "Скрыть действия";
+          list.innerHTML = '<div class="timeline-item">Загрузка...</div>';
+          const res = await Auth.getAdminUserActions(id, 50);
+          if (!res.ok) {
+            list.innerHTML = `<div class="timeline-item">Ошибка: ${escapeHtml(res.error || "Не удалось загрузить действия")}</div>`;
+            return;
+          }
+          const actions = Array.isArray(res.actions) ? res.actions : [];
+          if (!actions.length) {
+            list.innerHTML = '<div class="timeline-item">Действий пока нет.</div>';
+            return;
+          }
+          list.innerHTML = actions.map((a) => {
+            const details = actionMetaText(a.meta);
+            return `<div class="timeline-item">${escapeHtml(formatDate(a.createdAt))} — ${escapeHtml(formatUserAction(a.action))}${details ? ` (${escapeHtml(details)})` : ""}</div>`;
+          }).join("");
+        });
+      });
+
+      usersState.pagination = result.pagination || {};
+      updatePager("u", usersState.pagination);
+    }
+
+    async function loadWithdrawals() {
+      const result = await Auth.getAdminWithdrawals({ ...withdrawalsState.filters, page: withdrawalsState.page });
+      if (!result.ok) { show("err", result.error); return; }
+      const listEl = document.getElementById("withdrawalsList");
+      const items = result.withdrawals || [];
+      if (!items.length) {
+        listEl.innerHTML = '<div class="item"><div class="value">Заявок на вывод нет.</div></div>';
+      } else {
+        listEl.innerHTML = items.map((w) => `
+          <article class="item" data-id="${w.id}">
+            <div class="row">
+              <div class="cell">
+                <div class="label">Пользователь</div>
+                <div class="value">${escapeHtml(w.user.name)}</div>
+                <div class="value">${escapeHtml(w.user.email || "—")}</div>
+                <div class="value">${escapeHtml(w.user.phone || "—")}</div>
+              </div>
+              <div class="cell">
+                <div class="label">Сумма</div>
+                <div class="value">${formatMoney(w.amount)}</div>
+                <div class="label" style="margin-top:8px">Статус</div>
+                <div class="value">${escapeHtml(w.status)}</div>
+              </div>
+              <div class="cell">
+                <div class="label">СБП</div>
+                <div class="value">Телефон: ${escapeHtml(w.sbp.phone || "—")}</div>
+                <div class="value">ФИО: ${escapeHtml(w.sbp.holder || "—")}</div>
+                <div class="value">Банк: ${escapeHtml(w.sbp.bank || "—")}</div>
+              </div>
+              <div class="cell">
+                <div class="label">Даты</div>
+                <div class="value">Создана: ${escapeHtml(formatDate(w.createdAt))}</div>
+                <div class="value">Обработана: ${escapeHtml(formatDate(w.processedAt))}</div>
+                <div class="value">Админ: ${escapeHtml(w.processedBy || "—")}</div>
+              </div>
+            </div>
+            <div class="bottom">
+              <div class="value">ID вывода: ${w.id}</div>
+              <div class="mini-actions">
+                ${w.status === "pending" ? `
+                  <select class="w-status">
+                    <option value="approved">approved</option>
+                    <option value="rejected">rejected</option>
+                  </select>
+                  <input class="w-note" placeholder="Комментарий админа">
+                  <button class="primary process-w-btn">Обработать</button>
+                ` : `<div class="value">Комментарий: ${escapeHtml(w.adminNote || "—")}</div>`}
+              </div>
+            </div>
+          </article>
+        `).join("");
+      }
+
+      listEl.querySelectorAll(".process-w-btn").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const item = btn.closest(".item");
+          const id = Number(item.dataset.id);
+          const status = item.querySelector(".w-status").value;
+          const note = item.querySelector(".w-note").value.trim();
+          const res = await Auth.setWithdrawalStatus(id, status, note);
+          if (!res.ok) { show("err", res.error); return; }
+          show("ok", `Заявка на вывод #${id} обработана: ${status}`);
+          await loadWithdrawals();
+        });
+      });
+
+      withdrawalsState.pagination = result.pagination || {};
+      updatePager("w", withdrawalsState.pagination);
+    }
+
+    async function loadPromocodes() {
+      const result = await Auth.getAdminPromocodes({ ...promoState.filters, page: promoState.page });
+      if (!result.ok) { show("err", result.error); return; }
+      const listEl = document.getElementById("promocodesList");
+      const items = result.promocodes || [];
+      if (!items.length) {
+        listEl.innerHTML = '<div class="item"><div class="value">Промокодов не найдено.</div></div>';
+      } else {
+        listEl.innerHTML = items.map((p) => `
+          <article class="item" data-code="${escapeHtml(p.code)}">
+            <div class="row">
+              <div class="cell">
+                <div class="label">Промокод</div>
+                <div class="value">${escapeHtml(p.code)}</div>
+                <div class="label" style="margin-top:8px">Статус</div>
+                <div class="value">${freezeBadge(p)}</div>
+              </div>
+              <div class="cell">
+                <div class="label">Создатель</div>
+                <div class="value">${escapeHtml(p.owner?.name || "—")}</div>
+                <div class="value">${escapeHtml(p.owner?.email || "—")}</div>
+                <div class="value">${escapeHtml(p.owner?.phone || "—")}</div>
+              </div>
+              <div class="cell">
+                <div class="label">Создан</div>
+                <div class="value">${escapeHtml(formatDate(p.createdAt))}</div>
+                <div class="label" style="margin-top:8px">Заморожен</div>
+                <div class="value">${escapeHtml(formatDate(p.frozenAt))}</div>
+              </div>
+              <div class="cell">
+                <div class="label">Действия</div>
+                <div class="mini-actions">
+                  <button class="primary toggle-promo-history-btn" type="button">Развернуть историю</button>
+                  <button class="${p.isFrozen ? "primary" : "danger"} toggle-promo-freeze-btn" type="button">
+                    ${p.isFrozen ? "Разморозить" : "Заморозить"}
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="user-actions promo-history">
+              <div class="timeline promo-history-list"><div class="timeline-item">Нажмите "Развернуть историю".</div></div>
+            </div>
+          </article>
+        `).join("");
+      }
+
+      listEl.querySelectorAll(".toggle-promo-history-btn").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const item = btn.closest(".item");
+          const code = item.dataset.code;
+          const panel = item.querySelector(".promo-history");
+          const list = item.querySelector(".promo-history-list");
+          const isOpen = panel.classList.contains("active");
+          if (isOpen) {
+            panel.classList.remove("active");
+            btn.textContent = "Развернуть историю";
+            return;
+          }
+          panel.classList.add("active");
+          btn.textContent = "Скрыть историю";
+          list.innerHTML = '<div class="timeline-item">Загрузка...</div>';
+          const res = await Auth.getAdminPromocodeHistory(code, 100);
+          if (!res.ok) {
+            list.innerHTML = `<div class="timeline-item">Ошибка: ${escapeHtml(res.error || "Не удалось загрузить историю")}</div>`;
+            return;
+          }
+          const rows = Array.isArray(res.history) ? res.history : [];
+          if (!rows.length) {
+            list.innerHTML = '<div class="timeline-item">Промокод пока никто не использовал.</div>';
+            return;
+          }
+          list.innerHTML = rows.map((h) => `
+            <div class="timeline-item">
+              ${escapeHtml(formatDate(h.createdAt))} — использовал: ${escapeHtml(h.usedBy?.name || `ID ${h.usedBy?.id || "—"}`)}
+              (${escapeHtml(h.tariff || "—")}, ${escapeHtml(String(h.weeks || 0))} нед., ${escapeHtml(formatMoney(h.totalPrice || 0))}, статус: ${escapeHtml(h.status || "—")})
+            </div>
+          `).join("");
+        });
+      });
+
+      listEl.querySelectorAll(".toggle-promo-freeze-btn").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const item = btn.closest(".item");
+          const code = item.dataset.code;
+          const shouldFreeze = btn.textContent.trim().toLowerCase() === "заморозить";
+          const note = shouldFreeze ? prompt("Комментарий к заморозке (необязательно):", "") || "" : "";
+          const res = await Auth.setAdminPromocodeFrozen(code, shouldFreeze, note);
+          if (!res.ok) {
+            show("err", res.error || "Не удалось изменить статус промокода");
+            return;
+          }
+          show("ok", shouldFreeze ? `Промокод ${code} заморожен` : `Промокод ${code} разморожен`);
+          await loadPromocodes();
+        });
+      });
+
+      promoState.pagination = result.pagination || {};
+      updatePager("pc", promoState.pagination);
+    }
+
+    function bindPracticeControls() {
+      document.getElementById("pApplyFiltersBtn").addEventListener("click", async () => {
+        practiceState.filters = {
+          q: document.getElementById("pSearchInput").value.trim(),
+          status: document.getElementById("pStatusFilter").value,
+          tariff: document.getElementById("pTariffFilter").value,
+          promo: document.getElementById("pPromoFilter").value,
+          dateFrom: document.getElementById("pDateFromFilter").value,
+          dateTo: document.getElementById("pDateToFilter").value,
+          pageSize: Number(document.getElementById("pPageSizeFilter").value || 10),
+        };
+        practiceState.page = 1;
+        await loadPractice();
+      });
+      document.getElementById("pPrevPageBtn").addEventListener("click", async () => {
+        if (practiceState.page <= 1) return;
+        practiceState.page -= 1;
+        await loadPractice();
+      });
+      document.getElementById("pNextPageBtn").addEventListener("click", async () => {
+        const max = practiceState.pagination?.totalPages || 1;
+        if (practiceState.page >= max) return;
+        practiceState.page += 1;
+        await loadPractice();
+      });
+    }
+
+    function bindUsersControls() {
+      document.getElementById("uApplyFiltersBtn").addEventListener("click", async () => {
+        usersState.filters = {
+          q: document.getElementById("uSearchInput").value.trim(),
+          role: document.getElementById("uRoleFilter").value,
+          pageSize: Number(document.getElementById("uPageSizeFilter").value || 10),
+        };
+        usersState.page = 1;
+        await loadUsers();
+      });
+      document.getElementById("uPrevPageBtn").addEventListener("click", async () => {
+        if (usersState.page <= 1) return;
+        usersState.page -= 1;
+        await loadUsers();
+      });
+      document.getElementById("uNextPageBtn").addEventListener("click", async () => {
+        const max = usersState.pagination?.totalPages || 1;
+        if (usersState.page >= max) return;
+        usersState.page += 1;
+        await loadUsers();
+      });
+    }
+
+    function bindWithdrawalsControls() {
+      document.getElementById("wApplyFiltersBtn").addEventListener("click", async () => {
+        withdrawalsState.filters = {
+          q: document.getElementById("wSearchInput").value.trim(),
+          status: document.getElementById("wStatusFilter").value,
+          pageSize: Number(document.getElementById("wPageSizeFilter").value || 10),
+        };
+        withdrawalsState.page = 1;
+        await loadWithdrawals();
+      });
+      document.getElementById("wPrevPageBtn").addEventListener("click", async () => {
+        if (withdrawalsState.page <= 1) return;
+        withdrawalsState.page -= 1;
+        await loadWithdrawals();
+      });
+      document.getElementById("wNextPageBtn").addEventListener("click", async () => {
+        const max = withdrawalsState.pagination?.totalPages || 1;
+        if (withdrawalsState.page >= max) return;
+        withdrawalsState.page += 1;
+        await loadWithdrawals();
+      });
+    }
+
+    function bindPromocodesControls() {
+      document.getElementById("pcApplyFiltersBtn").addEventListener("click", async () => {
+        promoState.filters = {
+          q: document.getElementById("pcSearchInput").value.trim(),
+          frozen: document.getElementById("pcFrozenFilter").value,
+          pageSize: Number(document.getElementById("pcPageSizeFilter").value || 10),
+        };
+        promoState.page = 1;
+        await loadPromocodes();
+      });
+      document.getElementById("pcPrevPageBtn").addEventListener("click", async () => {
+        if (promoState.page <= 1) return;
+        promoState.page -= 1;
+        await loadPromocodes();
+      });
+      document.getElementById("pcNextPageBtn").addEventListener("click", async () => {
+        const max = promoState.pagination?.totalPages || 1;
+        if (promoState.page >= max) return;
+        promoState.page += 1;
+        await loadPromocodes();
+      });
+    }
+
+    (async () => {
+      const user = await Auth.currentUser();
+      if (!user) { location.href = "login.html"; return; }
+      if (user.role !== "admin") { location.href = "cabinet.html"; return; }
+      bindTabs();
+      bindPracticeControls();
+      bindUsersControls();
+      bindWithdrawalsControls();
+      bindPromocodesControls();
+      await Promise.all([loadPractice(), loadUsers(), loadWithdrawals(), loadPromocodes()]);
+    })();
+
+    document.getElementById("logoutBtn").addEventListener("click", async (e) => {
+      e.preventDefault();
+      await Auth.logout();
+      location.href = "index.html";
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "name": "praktikant",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "load:test": "bash tests/load/run_service_tests.sh",
+    "load:heavy": "bash tests/load/heavy_scenario.sh",
+    "load:read": "bash tests/load/read_burst.sh"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "nodemailer": "^8.0.3",
+    "sqlite3": "^6.0.1"
+  }
+}

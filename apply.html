@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0d0c0a">
+  <script src="theme.js?v=20261108"></script>
+  <title>Заявка на тариф — Практика Онлайн</title>
+  <link rel="icon" type="image/png" href="./immages/Логотип.png">
+  <style>
+    :root {
+      --radius: 20px;
+      --radius-sm: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      width: 100%;
+      max-width: 560px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: none;
+      padding: 32px;
+    }
+    .logo { width: 190px; display: block; margin: 0 auto 20px; }
+    h1 { font-size: 1.6rem; text-align: center; margin-bottom: 8px; }
+    .sub { text-align: center; color: var(--muted); margin-bottom: 20px; }
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.92rem;
+    }
+    .field select,
+    .field textarea,
+    .field input {
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      background: var(--surface-2);
+      color: var(--text);
+      border-radius: var(--radius-sm);
+      padding: 12px 13px;
+      font-size: 0.96rem;
+      outline: none;
+      transition: border-color 0.24s ease, box-shadow 0.24s ease, background 0.24s ease;
+    }
+    .field select:focus,
+    .field textarea:focus,
+    .field input:focus {
+      border-color: var(--line-strong);
+      box-shadow: none;
+      background: var(--surface-2);
+    }
+    .promo-wrap {
+      position: relative;
+    }
+    .promo-wrap::before {
+      content: "PROMO";
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      pointer-events: none;
+      opacity: 0.9;
+    }
+    .promo-wrap input {
+      padding-left: 68px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .field textarea { min-height: 120px; resize: vertical; }
+    .calc {
+      border: 1px solid var(--line-strong);
+      border-radius: 12px;
+      background: var(--surface-2);
+      padding: 12px;
+      margin-bottom: 14px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .calc b { color: var(--accent); font-size: 1.06rem; }
+    .btn {
+      width: 100%;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 13px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: #1a1307;
+      background: var(--brand);
+      box-shadow: none;
+    }
+    .ok, .error {
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      display: none;
+      font-size: 0.92rem;
+    }
+    .ok {
+      background: var(--ok-soft);
+      border: 1px solid var(--ok);
+      color: var(--ok-text);
+    }
+    .error {
+      background: var(--err-soft);
+      border: 1px solid var(--err);
+      color: var(--err-text);
+    }
+    .back {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.92rem;
+      border: 1px solid var(--line);
+      padding: 8px 14px;
+      border-radius: 10px;
+      background: var(--surface-2);
+    }
+  </style>
+  <link rel="stylesheet" href="theme.css?v=20261108">
+</head>
+<body>
+  <a class="back" href="index.html">← На главную</a>
+
+  <div class="card">
+    <img class="logo" src="./immages/Название.png" alt="Практикант Ру">
+    <h1>Оформление заявки</h1>
+    <p class="sub">Выберите тариф, даты практики и оставьте соцсети для связи</p>
+
+    <div class="ok" id="ok"></div>
+    <div class="error" id="error"></div>
+
+    <form id="applyForm">
+      <div class="field">
+        <label for="tariff">Тариф</label>
+        <select id="tariff" required>
+          <option value="Старт">Старт (700 ₽/неделя)</option>
+          <option value="PRO">PRO (1 150 ₽/неделя)</option>
+          <option value="Эксперт">Эксперт (2 800 ₽/неделя)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="startDate">Дата начала практики</label>
+        <input type="date" id="startDate" required>
+      </div>
+      <div class="field">
+        <label for="endDate">Дата окончания практики</label>
+        <input type="date" id="endDate" required>
+      </div>
+      <div class="field">
+        <label for="socials">Ваши соцсети / контакты</label>
+        <textarea id="socials" placeholder="Например: Telegram @username, VK, WhatsApp номер..." required></textarea>
+      </div>
+      <div class="field">
+        <label for="promoCode">Промокод (опционально, можно использовать только один раз)</label>
+        <div class="promo-wrap">
+          <input type="text" id="promoCode" placeholder="Например: REF1234">
+        </div>
+      </div>
+      <div class="calc" id="priceCalc"></div>
+      <button class="btn" type="submit">Отправить заявку</button>
+    </form>
+  </div>
+
+  <script src="auth.js?v=20260418"></script>
+  <script>
+    const okEl = document.getElementById("ok");
+    const errEl = document.getElementById("error");
+    const tariffEl = document.getElementById("tariff");
+    const startDateEl = document.getElementById("startDate");
+    const endDateEl = document.getElementById("endDate");
+    const promoEl = document.getElementById("promoCode");
+    const calcEl = document.getElementById("priceCalc");
+    const PLANS = {
+      "Старт": { weekly: 700, discount: 500 },
+      "PRO": { weekly: 1150, discount: 750 },
+      "Эксперт": { weekly: 2800, discount: 1000 },
+    };
+
+    function showOk(msg) {
+      errEl.style.display = "none";
+      okEl.textContent = msg;
+      okEl.style.display = "block";
+    }
+    function showErr(msg) {
+      okEl.style.display = "none";
+      errEl.textContent = msg;
+      errEl.style.display = "block";
+    }
+
+    function calculateWeeks(startDate, endDate) {
+      if (!startDate || !endDate) return 0;
+      const start = new Date(`${startDate}T00:00:00`);
+      const end = new Date(`${endDate}T00:00:00`);
+      if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end <= start) return 0;
+      const diffMs = end - start;
+      const days = Math.floor(diffMs / (24 * 60 * 60 * 1000));
+      if (days < 7) return 0;
+      return Math.ceil(days / 7);
+    }
+
+    function formatLocalDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function shiftDate(dateStr, daysDelta) {
+      const d = new Date(`${dateStr}T00:00:00`);
+      d.setDate(d.getDate() + daysDelta);
+      return formatLocalDate(d);
+    }
+
+    function updateCalc() {
+      const tariff = tariffEl.value;
+      const plan = PLANS[tariff] || PLANS["Старт"];
+      const weeks = calculateWeeks(startDateEl.value, endDateEl.value);
+      const hasPromo = promoEl.value.trim().length > 0;
+      const full = plan.weekly * weeks;
+      const promoAvailable = weeks >= 4;
+      const discount = hasPromo && promoAvailable ? plan.discount : 0;
+      const discounted = Math.max(full - discount, 0);
+      const periodText = (startDateEl.value && endDateEl.value)
+        ? (weeks ? `${weeks} нед.` : "минимум 1 неделя")
+        : "выберите даты";
+      calcEl.innerHTML = `
+        Срок практики: ${periodText}<br>
+        Базовая сумма: ${full.toLocaleString("ru-RU")} ₽ (${plan.weekly.toLocaleString("ru-RU")} ₽/нед.)<br>
+        Скидка по промокоду: ${
+          hasPromo
+            ? (promoAvailable ? ("-" + discount.toLocaleString("ru-RU") + " ₽") : "доступна от 4 недель")
+            : "не применяется"
+        }<br>
+        <b>Итого к оплате: ${discounted.toLocaleString("ru-RU")} ₽</b>
+      `;
+    }
+
+    (async () => {
+      if (!(await Auth.isLoggedIn())) {
+        location.href = "login.html";
+      }
+
+      const fromQuery = new URLSearchParams(location.search).get("tariff");
+      if (fromQuery) {
+        const tariffSelect = document.getElementById("tariff");
+        const option = [...tariffSelect.options].find((opt) => opt.value.startsWith(fromQuery));
+        if (option) {
+          tariffSelect.value = option.value;
+        }
+      }
+      const today = formatLocalDate(new Date());
+      const minStart = shiftDate(today, -7);
+      const defaultStart = today;
+      const defaultEnd = shiftDate(defaultStart, 7);
+      startDateEl.min = minStart;
+      startDateEl.value = defaultStart;
+      endDateEl.min = defaultEnd;
+      endDateEl.value = defaultEnd;
+      updateCalc();
+    })();
+
+    tariffEl.addEventListener("change", updateCalc);
+    startDateEl.addEventListener("change", () => {
+      const minEnd = shiftDate(startDateEl.value, 7);
+      endDateEl.min = minEnd;
+      if (endDateEl.value && endDateEl.value < minEnd) {
+        endDateEl.value = minEnd;
+      }
+      updateCalc();
+    });
+    endDateEl.addEventListener("change", updateCalc);
+    promoEl.addEventListener("input", updateCalc);
+
+    document.getElementById("applyForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const tariff = document.getElementById("tariff").value;
+      const startDate = startDateEl.value;
+      const endDate = endDateEl.value;
+      const weeks = calculateWeeks(startDate, endDate);
+      if (!weeks) {
+        showErr("Минимальный срок практики — 1 неделя");
+        return;
+      }
+      const today = formatLocalDate(new Date());
+      if (startDate < shiftDate(today, -7)) {
+        showErr("Дата начала может быть задним числом не более чем на 7 дней");
+        return;
+      }
+      const socials = document.getElementById("socials").value.trim();
+      const promoCode = promoEl.value.trim();
+      if (promoCode && weeks < 4) {
+        showErr("Промокод доступен только при оформлении от 4 недель");
+        return;
+      }
+      const result = await Auth.createApplication(tariff, socials, startDate, endDate, promoCode);
+      if (!result.ok) {
+        showErr(result.error);
+        return;
+      }
+      showOk("Заявка отправлена. Мы скоро с вами свяжемся.");
+      document.getElementById("socials").value = "";
+      promoEl.value = "";
+      updateCalc();
+    });
+  </script>
+</body>
+</html>

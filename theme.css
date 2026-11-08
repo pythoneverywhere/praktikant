@@ -1,0 +1,99 @@
+/* =========================================================
+   Общая тема сайта: цветовые токены (тёмная / светлая)
+   + переключатель темы. Подключается ПОСЛЕ <style> страницы.
+   ========================================================= */
+
+:root,
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0d0c0a;
+  --surface: #17140f;        /* карточки, панели */
+  --surface-2: #11100c;      /* поля ввода, вложенные блоки */
+  --surface-hover: #1e1a13;
+  --line: rgba(207, 167, 74, 0.2);
+  --line-strong: rgba(207, 167, 74, 0.45);
+  --text: #f3eee2;
+  --muted: #b9ab8f;
+  --brand: #cfa74a;          /* фон основных кнопок */
+  --brand-hover: #dcb65e;
+  --brand-soft: rgba(207, 167, 74, 0.12);
+  --accent: #e6c776;         /* золотой текст */
+  --on-brand: #1a1307;
+  --ok: #9fd27a;
+  --ok-text: #cfe9b4;
+  --ok-soft: rgba(159, 210, 122, 0.12);
+  --warn: #f2c14e;
+  --warn-soft: rgba(242, 193, 78, 0.12);
+  --err: #ef7d7d;
+  --err-text: #ffb0b0;
+  --err-soft: rgba(239, 90, 90, 0.12);
+  --overlay: rgba(0, 0, 0, 0.6);
+
+  /* совместимость со старыми именами переменных */
+  --card: var(--surface);
+  --brand-2: var(--accent);
+  --brand-3: var(--accent);
+  --shadow: none;
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f6f4ef;
+  --surface: #ffffff;
+  --surface-2: #faf8f4;
+  --surface-hover: #f3efe6;
+  --line: #e7e0d1;
+  --line-strong: #cbbb94;
+  --text: #1d1a14;
+  --muted: #675f51;
+  --brand: #c9a14a;
+  --brand-hover: #b98f35;
+  --brand-soft: rgba(185, 143, 53, 0.1);
+  --accent: #8a6416;
+  --on-brand: #1a1307;
+  --ok: #3f8a2a;
+  --ok-text: #2f6b1f;
+  --ok-soft: rgba(63, 138, 42, 0.1);
+  --warn: #9a6b00;
+  --warn-soft: rgba(201, 145, 0, 0.12);
+  --err: #c94a4a;
+  --err-text: #a33030;
+  --err-soft: rgba(201, 74, 74, 0.1);
+  --overlay: rgba(20, 16, 10, 0.35);
+}
+
+body {
+  background: var(--bg) !important;
+  color: var(--text);
+}
+
+/* ---------- Переключатель темы ---------- */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  padding: 0;
+  border-radius: 10px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--accent);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.theme-toggle:hover {
+  background: var(--brand-soft);
+}
+.theme-toggle svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+.theme-toggle--float {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 50;
+}

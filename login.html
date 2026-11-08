@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0d0c0a">
+  <script src="theme.js?v=20261108"></script>
+  <title>Вход — Практика Онлайн</title>
+  <link rel="icon" type="image/png" href="./immages/Логотип.png">
+  <style>
+    :root {
+      --radius: 20px;
+      --radius-sm: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .auth-card {
+      width: 100%; max-width: 500px; background: var(--card); border: 1px solid var(--line);
+      border-radius: var(--radius); box-shadow: none; padding: 34px;
+    }
+    .auth-logo { display: block; width: 180px; margin: 0 auto 22px; }
+    h1 { font-size: 1.5rem; text-align: center; margin-bottom: 6px; }
+    .sub { text-align: center; color: var(--muted); margin-bottom: 22px; font-size: 0.95rem; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.92rem; color: var(--muted); }
+    .field input {
+      width: 100%; padding: 11px 13px; border-radius: var(--radius-sm); border: 1px solid var(--line-strong);
+      background: var(--surface-2); color: var(--text); font-size: 0.97rem; outline: none; transition: border-color 0.2s;
+    }
+    .field input:focus { border-color: var(--brand); }
+    .stepup-box {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      display: none;
+    }
+    .stepup-box.active { display: block; }
+    .verify-box {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      display: none;
+    }
+    .verify-box.active { display: block; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: 12px; border: none;
+      border-radius: var(--radius-sm); font-size: 0.97rem; font-weight: 700; cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s; color: #1a1307;
+      background: var(--brand); box-shadow: none;
+      margin-top: 4px;
+    }
+    .btn:hover { transform: none; }
+    .btn-small {
+      width: auto; padding: 11px 12px; white-space: nowrap; font-size: 0.88rem;
+      background: var(--brand-soft); color: var(--accent); border: 1px solid var(--line-strong); box-shadow: none;
+      margin-top: 0; align-self: end;
+    }
+    .btn-link {
+      margin-top: 10px; background: transparent; color: var(--accent);
+      border: 1px solid var(--line-strong); box-shadow: none;
+    }
+    .hint { color: var(--muted); font-size: 0.86rem; margin-top: -4px; margin-bottom: 10px; }
+    .error {
+      background: var(--err-soft); border: 1px solid var(--err); color: var(--err-text);
+      border-radius: 10px; padding: 10px 14px; font-size: 0.92rem; margin-bottom: 14px; display: none;
+    }
+    .ok {
+      background: var(--ok-soft); border: 1px solid var(--ok); color: var(--ok-text);
+      border-radius: 10px; padding: 10px 14px; font-size: 0.9rem; margin-bottom: 14px; display: none;
+    }
+    .links { text-align: center; margin-top: 16px; font-size: 0.92rem; color: var(--muted); }
+    .links a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    .links a:hover { text-decoration: underline; }
+    .back {
+      position: absolute; top: 20px; left: 20px; color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.92rem;
+      border: 1px solid var(--line); padding: 8px 14px; border-radius: 10px; background: var(--surface-2); transition: 0.2s;
+    }
+    .back:hover { border-color: var(--brand); color: var(--text); }
+  </style>
+  <link rel="stylesheet" href="theme.css?v=20261108">
+</head>
+<body>
+  <a class="back" href="index.html">← На главную</a>
+
+  <div class="auth-card">
+    <img class="auth-logo" src="./immages/Название.png" alt="Практикант Ру">
+    <h1>Вход в аккаунт</h1>
+    <p class="sub">Вход по email или телефону + пароль</p>
+    <div class="error" id="error"></div>
+    <div class="ok" id="ok"></div>
+
+    <form id="loginForm">
+      <div class="field">
+        <label for="identifier">Email или телефон</label>
+        <input type="text" id="identifier" placeholder="you@example.com или +7..." required>
+      </div>
+      <div class="field">
+        <label for="password">Пароль</label>
+        <input type="password" id="password" placeholder="Ваш пароль" required>
+      </div>
+      <button class="btn" type="submit">Войти</button>
+      <button class="btn btn-link" type="button" id="toggleReset">Забыли пароль?</button>
+    </form>
+    <div id="stepUpBox" class="stepup-box">
+      <h3 style="margin-bottom:10px; font-size:1rem;">Дополнительное подтверждение</h3>
+      <div class="field" id="emailCodeField" style="display:none;">
+        <label for="stepUpEmailCode">Код из email</label>
+        <input type="text" id="stepUpEmailCode" placeholder="6 цифр">
+      </div>
+      <button class="btn" type="button" id="verifyStepUpBtn">Подтвердить вход</button>
+    </div>
+    <div id="verifyEmailBox" class="verify-box">
+      <h3 style="margin-bottom:10px; font-size:1rem;">Подтверждение email</h3>
+      <div class="field">
+        <label for="verifyEmailCode">Код подтверждения</label>
+        <input type="text" id="verifyEmailCode" placeholder="6 цифр">
+      </div>
+      <div class="hint">Если письмо не пришло, нажмите "Отправить код повторно".</div>
+      <div class="btn-group" style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-small" type="button" id="resendVerifyBtn">Отправить код повторно</button>
+        <button class="btn" type="button" id="confirmVerifyBtn">Подтвердить email</button>
+      </div>
+    </div>
+
+    <p class="links">Нет аккаунта? <a href="register.html">Зарегистрироваться</a></p>
+  </div>
+
+  <script src="auth.js"></script>
+  <script>
+    const errorEl = document.getElementById('error');
+    const okEl = document.getElementById('ok');
+
+    function showError(msg) {
+      okEl.style.display = 'none';
+      errorEl.textContent = msg;
+      errorEl.style.display = 'block';
+    }
+    function showOk(msg) {
+      errorEl.style.display = 'none';
+      okEl.textContent = msg;
+      okEl.style.display = 'block';
+    }
+
+    (async () => {
+      if (await Auth.isLoggedIn()) location.href = 'cabinet.html';
+    })();
+
+    let stepUpToken = '';
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const identifier = document.getElementById('identifier').value.trim();
+      const password = document.getElementById('password').value;
+      const result = await Auth.login(identifier, password);
+      if (!result.ok) {
+        if (result.emailVerificationRequired) {
+          document.getElementById('verifyEmailBox').classList.add('active');
+          showError(result.error || 'Подтвердите email для входа.');
+          return;
+        }
+        showError(result.error);
+        return;
+      }
+      if (result.stepUpRequired) {
+        stepUpToken = result.stepUpToken;
+        document.getElementById('stepUpBox').classList.add('active');
+        document.getElementById('emailCodeField').style.display = result.requiresEmailCode ? 'block' : 'none';
+        showOk('Нужно дополнительное подтверждение входа.');
+        return;
+      }
+      location.href = 'cabinet.html';
+    });
+
+    document.getElementById('resendVerifyBtn').addEventListener('click', async () => {
+      const identifier = document.getElementById('identifier').value.trim();
+      if (!identifier) {
+        showError('Введите email или телефон выше.');
+        return;
+      }
+      const result = await Auth.requestEmailVerification('', identifier);
+      if (!result.ok) {
+        showError(result.error);
+        return;
+      }
+      showOk(result.message || 'Письмо отправлено');
+    });
+
+    document.getElementById('confirmVerifyBtn').addEventListener('click', async () => {
+      const identifier = document.getElementById('identifier').value.trim();
+      const code = document.getElementById('verifyEmailCode').value.trim();
+      if (!identifier || !code) {
+        showError('Введите email/телефон и код подтверждения.');
+        return;
+      }
+      const payload = identifier.includes('@')
+        ? { email: identifier, code }
+        : { identifier, code };
+      const result = await Auth.confirmEmailVerification(payload);
+      if (!result.ok) {
+        showError(result.error);
+        return;
+      }
+      location.href = 'cabinet.html';
+    });
+
+    document.getElementById('verifyStepUpBtn').addEventListener('click', async () => {
+      if (!stepUpToken) {
+        showError('Сначала введите логин и пароль.');
+        return;
+      }
+      const emailCode = document.getElementById('stepUpEmailCode').value.trim();
+      const result = await Auth.verifyLoginStepUp(stepUpToken, emailCode);
+      if (!result.ok) {
+        showError(result.error);
+        return;
+      }
+      location.href = 'cabinet.html';
+    });
+
+    document.getElementById('toggleReset').addEventListener('click', async () => {
+      const identifier = document.getElementById('identifier').value.trim();
+      if (!identifier) {
+        showError('Введите email или телефон в поле входа.');
+        return;
+      }
+      const result = await Auth.requestPasswordReset(identifier);
+      if (!result.ok) {
+        showError(result.error);
+        return;
+      }
+      showOk(result.message || 'Если аккаунт найден, письмо со ссылкой отправлено на email');
+    });
+  </script>
+</body>
+</html>

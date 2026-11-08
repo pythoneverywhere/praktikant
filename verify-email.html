@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0d0c0a">
+  <script src="theme.js?v=20261108"></script>
+  <title>Подтверждение email — Практика Онлайн</title>
+  <link rel="icon" type="image/png" href="./immages/Логотип.png">
+  <style>
+    body { font-family: Inter, Arial, sans-serif; background: var(--bg); color: var(--text); min-height:100vh; display:grid; place-items:center; margin:0; }
+    .card { width:min(92vw,460px); padding:24px; border: 1px solid var(--line-strong); border-radius:16px; background: var(--surface); }
+    h1 { margin:0 0 10px; font-size:1.3rem; }
+    .field { margin:12px 0; }
+    input { width:100%; padding:11px 12px; border-radius:12px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--text); }
+    button { width:100%; padding:11px; border:none; border-radius:12px; font-weight:700; cursor:pointer; background: var(--brand); color:#1a1307; }
+    .msg { margin-top:10px; font-size:.92rem; }
+    a { color: var(--accent); }
+  </style>
+  <link rel="stylesheet" href="theme.css?v=20261108">
+</head>
+<body>
+  <div class="card">
+    <h1>Подтверждение email</h1>
+    <p>Введите код из письма или откройте страницу по ссылке из письма.</p>
+    <div class="field">
+      <input id="email" type="email" placeholder="Email">
+    </div>
+    <div class="field">
+      <input id="code" type="text" placeholder="Код подтверждения">
+    </div>
+    <button id="submitBtn" type="button">Подтвердить</button>
+    <div id="msg" class="msg"></div>
+    <p style="margin-top:12px;"><a href="login.html">Перейти ко входу</a></p>
+  </div>
+  <script src="auth.js"></script>
+  <script>
+    const msg = document.getElementById("msg");
+    function show(text, isErr = false) {
+      msg.textContent = text;
+      msg.style.color = isErr ? "var(--err-text)" : "var(--ok-text)";
+    }
+    async function verifyByTokenIfPresent() {
+      const token = new URLSearchParams(location.search).get("token");
+      if (!token) return;
+      const result = await Auth.confirmEmailVerification({ token });
+      if (!result.ok) {
+        show(result.error, true);
+        return;
+      }
+      show("Email подтвержден. Выполняется вход...");
+      location.href = "cabinet.html";
+    }
+    document.getElementById("submitBtn").addEventListener("click", async () => {
+      const email = document.getElementById("email").value.trim();
+      const code = document.getElementById("code").value.trim();
+      const result = await Auth.confirmEmailVerification({ email, code });
+      if (!result.ok) {
+        show(result.error, true);
+        return;
+      }
+      location.href = "cabinet.html";
+    });
+    verifyByTokenIfPresent();
+  </script>
+</body>
+</html>

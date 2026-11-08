@@ -1,0 +1,22 @@
+# Секреты и окружение
+.env
+.env.*
+!env.python.example
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Node
+node_modules/
+
+# Локальные данные и бэкапы
+data/
+backup-*/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store

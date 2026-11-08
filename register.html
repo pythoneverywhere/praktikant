@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0d0c0a">
+  <script src="theme.js?v=20261108"></script>
+  <title>Регистрация — Практика Онлайн</title>
+  <link rel="icon" type="image/png" href="./immages/Логотип.png">
+  <style>
+    :root {
+      --radius: 20px;
+      --radius-sm: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .auth-card {
+      width: 100%;
+      max-width: 480px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: none;
+      padding: 34px;
+    }
+    .auth-logo { display: block; width: 180px; margin: 0 auto 22px; }
+    .auth-card h1 { font-size: 1.5rem; text-align: center; margin-bottom: 6px; }
+    .auth-card .sub { text-align: center; color: var(--muted); margin-bottom: 22px; font-size: 0.95rem; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.92rem; color: var(--muted); }
+    .field input {
+      width: 100%; padding: 11px 13px; border-radius: var(--radius-sm); border: 1px solid var(--line-strong);
+      background: var(--surface-2); color: var(--text); font-size: 0.97rem; outline: none; transition: border-color 0.2s;
+    }
+    .field input:focus { border-color: var(--brand); }
+    .verify-box {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      display: none;
+    }
+    .verify-box.active { display: block; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: 12px; border: none;
+      border-radius: var(--radius-sm); font-size: 0.97rem; font-weight: 700; cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s; color: #1a1307;
+      background: var(--brand); box-shadow: none;
+      margin-top: 4px;
+    }
+    .btn:hover { transform: none; }
+    .btn-small {
+      width: auto; padding: 11px 12px; white-space: nowrap; font-size: 0.88rem;
+      background: var(--brand-soft); color: var(--accent); border: 1px solid var(--line-strong); box-shadow: none;
+      margin-top: 0; align-self: end;
+    }
+    .hint { color: var(--muted); font-size: 0.86rem; margin-top: -4px; margin-bottom: 10px; }
+    .error {
+      background: var(--err-soft); border: 1px solid var(--err); color: var(--err-text);
+      border-radius: 10px; padding: 10px 14px; font-size: 0.92rem; margin-bottom: 14px; display: none;
+    }
+    .ok {
+      background: var(--ok-soft); border: 1px solid var(--ok); color: var(--ok-text);
+      border-radius: 10px; padding: 10px 14px; font-size: 0.9rem; margin-bottom: 14px; display: none;
+    }
+    .links { text-align: center; margin-top: 16px; font-size: 0.92rem; color: var(--muted); }
+    .links a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    .links a:hover { text-decoration: underline; }
+    .back {
+      position: absolute; top: 20px; left: 20px; color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.92rem;
+      border: 1px solid var(--line); padding: 8px 14px; border-radius: 10px; background: var(--surface-2); transition: 0.2s;
+    }
+    .back:hover { border-color: var(--brand); color: var(--text); }
+    .consent-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 14px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+    .consent-row input[type="checkbox"] {
+      margin-top: 2px;
+      width: 16px;
+      height: 16px;
+      accent-color: var(--brand);
+      flex: 0 0 auto;
+    }
+    .consent-row a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .consent-row a:hover { text-decoration: underline; }
+  </style>
+  <link rel="stylesheet" href="theme.css?v=20261108">
+</head>
+<body>
+  <a class="back" href="index.html">← На главную</a>
+  <div class="auth-card">
+    <img class="auth-logo" src="./immages/Название.png" alt="Практикант Ру">
+    <h1>Регистрация</h1>
+    <p class="sub">Введите данные и подтвердите email кодом из письма</p>
+    <div class="error" id="error"></div>
+    <div class="ok" id="ok"></div>
+    <form id="registerForm">
+      <div class="field">
+        <label for="name">Имя</label>
+        <input type="text" id="name" placeholder="Ваше имя" required>
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="you@example.com" required>
+      </div>
+      <div class="field">
+        <label for="phone">Телефон</label>
+        <input type="tel" id="phone" placeholder="+7 (999) 123-45-67" required>
+      </div>
+      <div class="field">
+        <label for="password">Пароль</label>
+        <input type="password" id="password" placeholder="Минимум 8 символов" required minlength="8" maxlength="128">
+      </div>
+      <div class="field">
+        <label for="password2">Повторите пароль</label>
+        <input type="password" id="password2" placeholder="Ещё раз" required minlength="8" maxlength="128">
+      </div>
+      <label class="consent-row" for="termsAccepted">
+        <input type="checkbox" id="termsAccepted" required>
+        <span>Я принимаю <a href="privacy-policy.html" target="_blank" rel="noopener noreferrer">политику конфиденциальности и пользовательское соглашение</a>.</span>
+      </label>
+      <button class="btn" type="submit">Создать аккаунт</button>
+    </form>
+    <div id="verifyBox" class="verify-box">
+      <div class="field">
+        <label for="verifyCode">Код подтверждения из email</label>
+        <input type="text" id="verifyCode" placeholder="6 цифр">
+      </div>
+      <div class="btn-group" style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-small" type="button" id="resendVerifyBtn">Отправить код повторно</button>
+        <button class="btn" type="button" id="confirmVerifyBtn">Подтвердить email</button>
+      </div>
+    </div>
+    <p class="links">Уже есть аккаунт? <a href="login.html">Войти</a></p>
+  </div>
+  <script src="auth.js"></script>
+  <script>
+    const errorEl = document.getElementById('error');
+    const okEl = document.getElementById('ok');
+    const phoneEl = document.getElementById('phone');
+    const emailEl = document.getElementById('email');
+    const verifyBox = document.getElementById('verifyBox');
+
+    function showError(msg) {
+      okEl.style.display = 'none';
+      errorEl.textContent = msg;
+      errorEl.style.display = 'block';
+    }
+    function showOk(msg) {
+      errorEl.style.display = 'none';
+      okEl.textContent = msg;
+      okEl.style.display = 'block';
+    }
+
+    (async () => {
+      if (await Auth.isLoggedIn()) location.href = 'cabinet.html';
+    })();
+
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const email = emailEl.value.trim();
+      const phone = phoneEl.value.trim();
+      const password = document.getElementById('password').value;
+      const password2 = document.getElementById('password2').value;
+      const termsAccepted = document.getElementById('termsAccepted').checked;
+
+      if (password !== password2) {
+        showError('Пароли не совпадают');
+        return;
+      }
+      if (!termsAccepted) {
+        showError('Для регистрации нужно принять политику конфиденциальности.');
+        return;
+      }
+
+      const result = await Auth.register(name, email, phone, password, termsAccepted);
+      if (result.ok) {
+        verifyBox.classList.add('active');
+        showOk(result.message || 'Аккаунт создан. Подтвердите email.');
+      } else {
+        showError(result.error);
+      }
+    });
+
+    document.getElementById('resendVerifyBtn').addEventListener('click', async () => {
+      const email = emailEl.value.trim();
+      const result = await Auth.requestEmailVerification(email);
+      if (result.ok) showOk(result.message || 'Письмо отправлено');
+      else showError(result.error);
+    });
+
+    document.getElementById('confirmVerifyBtn').addEventListener('click', async () => {
+      const email = emailEl.value.trim();
+      const code = document.getElementById('verifyCode').value.trim();
+      const result = await Auth.confirmEmailVerification({ email, code });
+      if (!result.ok) {
+        showError(result.error);
+        return;
+      }
+      location.href = 'cabinet.html';
+    });
+  </script>
+</body>
+</html>

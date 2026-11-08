@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Практика Онлайн - Закрываем практику дистанционно</title>
+  <link rel="icon" type="image/png" href="./immages/Логотип.png">
+  <link rel="apple-touch-icon" href="./immages/Логотип.png">
+  <meta name="theme-color" content="#0d0c0a">
+  <script src="theme.js?v=20261108"></script>
+  <meta name="description" content="Закрываем производственную практику онлайн: любая специальность, любой курс. Тарифы: базовый, продвинутый и максимальный. Быстро, официально, дистанционно.">
+  <style>
+    :root {
+      --radius: 16px;
+      --radius-sm: 12px;
+      --max: 1200px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      min-height: 100vh;
+      line-height: 1.55;
+      overflow-x: hidden;
+    }
+
+    .container { width: min(100% - 32px, var(--max)); margin-inline: auto; }
+
+    /* ---------- Шапка ---------- */
+    header {
+      position: sticky; top: 0; z-index: 20;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+    }
+    .header-wrap {
+      height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .brand { display: inline-flex; align-items: center; text-decoration: none; color: var(--text); min-width: 0; }
+    .brand img { height: 44px; object-fit: contain; border-radius: 8px; display: block; }
+    nav { display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
+    nav a {
+      color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.95rem;
+      padding: 8px 11px; border-radius: 10px; transition: color 0.15s ease, background 0.15s ease;
+    }
+    nav a:hover { color: var(--text); background: var(--brand-soft); }
+    .nav-cta { color: var(--on-brand) !important; background: var(--brand) !important; }
+    .nav-cta:hover { background: var(--brand-hover) !important; }
+    .nav-cta.nav-cta--ghost {
+      background: transparent !important; color: var(--accent) !important; border: 1px solid var(--line-strong);
+    }
+    .nav-cta.nav-cta--ghost:hover { background: var(--brand-soft) !important; }
+
+    /* ---------- Кнопки ---------- */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      border-radius: 12px; border: 1px solid transparent; text-decoration: none;
+      padding: 12px 18px; font: inherit; font-weight: 700; white-space: nowrap; cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .btn svg { width: 18px; height: 18px; }
+    .btn-primary { color: var(--on-brand); background: var(--brand); }
+    .btn-primary:hover { background: var(--brand-hover); }
+    .btn-secondary { color: var(--accent); background: transparent; border-color: var(--line-strong); }
+    .btn-secondary:hover { background: var(--brand-soft); }
+
+    /* ---------- Hero ---------- */
+    .hero { padding: 48px 0 36px; }
+    .hero-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 24px; align-items: stretch; }
+    .hero-text, .hero-card {
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    }
+    .hero-text { padding: 32px; display: flex; flex-direction: column; gap: 18px; }
+
+    .pill {
+      display: inline-flex; align-items: center; gap: 10px; width: fit-content;
+      border: 1px solid var(--line-strong); border-radius: 999px; padding: 6px 14px;
+      color: var(--accent); font-weight: 600; font-size: 0.9rem; background: var(--brand-soft);
+    }
+    .pill .live { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+
+    h1 { font-size: clamp(1.8rem, 4vw, 3rem); line-height: 1.15; letter-spacing: -0.02em; font-weight: 800; }
+    .gold { color: var(--accent); }
+    .lead { color: var(--muted); font-size: clamp(1rem, 2vw, 1.1rem); max-width: 62ch; }
+
+    .points { display: flex; flex-wrap: wrap; gap: 8px; }
+    .point {
+      display: inline-flex; align-items: center; gap: 7px;
+      border: 1px solid var(--line); background: var(--surface-2); color: var(--text);
+      padding: 6px 12px; border-radius: 999px; font-size: 0.9rem; font-weight: 600;
+    }
+    .point::before { content: "✓"; color: var(--accent); font-weight: 900; }
+
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
+
+    .meta { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .meta-card { border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line); padding: 12px 14px; }
+    .meta-card b { display: block; font-size: 1.5rem; font-weight: 800; line-height: 1; margin-bottom: 4px; color: var(--accent); }
+    .meta-card span { color: var(--muted); font-size: 0.87rem; }
+
+    /* ---------- Карточка тарифа ---------- */
+    .hero-card { padding: 24px; display: grid; gap: 16px; align-content: start; }
+    .logo-main {
+      width: 100%; border-radius: 12px; border: 1px solid var(--line); background: var(--surface-2);
+      overflow: hidden; min-height: 300px; position: relative;
+    }
+    .tariff-media { width: 100%; min-height: 300px; display: flex; align-items: center; justify-content: center; padding: 26px; }
+    /* Картинка 924×856; значки позиционируются в % от неё, центр блокнота — (724, 459) */
+    .tariff-figure {
+      position: relative; width: min(100%, calc(250px * 924 / 856)); aspect-ratio: 924 / 856;
+    }
+    .tariff-base { display: block; width: 100%; height: 100%; }
+    .tariff-icon {
+      position: absolute; left: calc(724 / 924 * 100%); top: calc(459 / 856 * 100%);
+      width: calc(var(--w) / 924 * 100%); height: auto;
+      opacity: 0; transform: translate(-50%, -50%) scale(0.3) rotate(-25deg);
+      transition: opacity 0.18s ease, transform 0.2s ease-in;
+      pointer-events: none;
+    }
+    .tariff-icon.is-active {
+      opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg);
+      transition: opacity 0.2s ease 0.14s, transform 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) 0.14s;
+    }
+
+    .tariff-title-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+    .tariff-title-left { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+    .tariff-title { font-size: 1.5rem; font-weight: 800; color: var(--accent); }
+    .tariff-tagline { color: var(--muted); font-size: 0.94rem; font-weight: 600; }
+    .tariff-title, .tariff-tagline, .price strong, .price span { transition: opacity 0.2s ease; }
+    .tariff-title.fade, .tariff-tagline.fade, .price strong.fade, .price span.fade, .old-price.fade { opacity: 0; }
+    .tariff-choose-link {
+      color: var(--accent); font-size: 0.9rem; font-weight: 600;
+      text-decoration: underline; text-underline-offset: 3px;
+    }
+
+    .price {
+      display: grid; gap: 4px; width: 100%;
+      background: var(--brand-soft); border: 1px solid var(--line-strong); border-radius: 12px; padding: 12px 16px;
+    }
+    .price-top { display: inline-flex; align-items: baseline; gap: 10px; }
+    .price strong { font-size: clamp(1.5rem, 3vw, 2rem); line-height: 1; color: var(--text); }
+    .price span { color: var(--muted); font-size: 0.92rem; }
+    .old-price { text-decoration: line-through; font-weight: 600; }
+    #buyTariffBtn { width: 100%; padding: 14px 18px; font-size: 1rem; }
+
+    .tariff-pills {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px;
+      border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line);
+    }
+    .tariff-pill {
+      border: 0; background: transparent; color: var(--muted); border-radius: 9px;
+      padding: 9px 6px; font: inherit; font-weight: 700; text-align: center; cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .tariff-pill small { display: block; font-weight: 500; font-size: 0.8rem; margin-top: 2px; }
+    .tariff-pill:hover { color: var(--text); }
+    .tariff-pill.active { background: var(--brand); color: var(--on-brand); }
+
+    /* ---------- Секции ---------- */
+    .section { padding: 40px 0; }
+    .eyebrow {
+      display: block; margin-bottom: 6px;
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent);
+    }
+    .title { font-size: clamp(1.5rem, 2.5vw, 2rem); margin-bottom: 8px; letter-spacing: -0.015em; font-weight: 800; }
+    .subtitle { color: var(--muted); margin-bottom: 20px; max-width: 72ch; }
+
+    /* О нас */
+    .about-wrap {
+      margin-top: 10px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface);
+      padding: 22px; display: grid; grid-template-columns: 1.3fr 1fr; gap: 18px;
+    }
+    .about-main p { color: var(--muted); margin-bottom: 10px; }
+    .about-main p:first-child { color: var(--text); font-size: 1.05rem; }
+    .about-main p:last-child { margin-bottom: 0; }
+    .about-features { display: grid; gap: 10px; align-content: start; }
+    .about-feature {
+      display: flex; align-items: center; gap: 14px; border-radius: 12px; padding: 12px 14px;
+      background: var(--surface-2); border: 1px solid var(--line); font-weight: 600;
+    }
+    .about-feature .ico {
+      width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0; display: grid; place-items: center;
+      color: var(--accent); background: var(--brand-soft);
+    }
+    .about-feature .ico svg { width: 20px; height: 20px; }
+
+    /* Сравнение */
+    .compare-wrap {
+      margin-top: 10px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface); padding: 20px;
+    }
+    .compare-tabs {
+      display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 14px; padding: 4px; width: fit-content; max-width: 100%;
+      border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line);
+    }
+    .compare-tab {
+      border: 0; background: transparent; color: var(--muted); border-radius: 9px;
+      padding: 8px 12px; font: inherit; font-size: 0.88rem; font-weight: 700; cursor: pointer;
+    }
+    .compare-tab:hover { color: var(--text); }
+    .compare-tab.active { background: var(--brand); color: var(--on-brand); }
+    .compare-panel { display: none; }
+    .compare-panel.active { display: block; }
+    .compare-scroll { overflow-x: auto; }
+    .compare-table { width: 100%; border-collapse: collapse; min-width: 560px; }
+    .compare-table th, .compare-table td {
+      padding: 11px 10px; text-align: center; border-bottom: 1px solid var(--line); font-size: 0.94rem;
+    }
+    .compare-table thead th { color: var(--accent); font-weight: 800; border-bottom-color: var(--line-strong); }
+    .compare-table th:first-child, .compare-table td:first-child { text-align: left; font-weight: 600; width: 34%; }
+    .compare-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 26px; height: 26px; border-radius: 50%; font-size: 0.95rem; font-weight: 800;
+    }
+    .compare-icon.yes { color: var(--on-brand); background: var(--brand); }
+    .compare-icon.no { color: var(--err); background: var(--err-soft); }
+    .compare-note { margin-top: 10px; color: var(--muted); font-size: 0.88rem; }
+
+    /* Шаги */
+    .steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .step { border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); padding: 18px; }
+    .step .num {
+      width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+      background: var(--brand); color: var(--on-brand); font-weight: 800; margin-bottom: 12px;
+    }
+    .step h3 { font-size: 1.05rem; margin-bottom: 6px; }
+    .step p { color: var(--muted); font-size: 0.95rem; }
+
+    /* FAQ */
+    .faq { display: grid; gap: 8px; }
+    .faq-item { border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); overflow: hidden; }
+    .faq-item.active { border-color: var(--line-strong); }
+    .faq-question {
+      width: 100%; text-align: left; background: transparent; color: var(--text); border: none;
+      padding: 16px 18px; font: inherit; font-size: 1rem; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .faq-question span:last-child {
+      width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center;
+      color: var(--accent); background: var(--brand-soft); font-size: 1.1rem; transition: transform 0.2s ease;
+    }
+    .faq-item.active .faq-question span:last-child { transform: rotate(45deg); }
+    .faq-answer { display: none; color: var(--muted); padding: 0 18px 16px; }
+    .faq-item.active .faq-answer { display: block; }
+
+    /* Контакты */
+    .contact {
+      margin-top: 10px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface);
+      padding: 26px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; align-items: center;
+    }
+    .contact-links { display: grid; gap: 10px; }
+    .contact-links a {
+      display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text);
+      border-radius: 12px; border: 1px solid var(--line); background: var(--surface-2);
+      padding: 12px 14px; font-weight: 600; transition: border-color 0.15s ease;
+    }
+    .contact-links a:hover { border-color: var(--line-strong); }
+    .contact-links a .ico {
+      width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0; display: grid; place-items: center;
+      color: var(--accent); background: var(--brand-soft);
+    }
+    .contact-links a .ico svg, .contact-links a .go svg { width: 18px; height: 18px; display: block; }
+    .contact-links a .go { margin-left: auto; color: var(--accent); }
+
+    /* Футер */
+    footer { padding: 28px 0 40px; color: var(--muted); font-size: 0.9rem; border-top: 1px solid var(--line); margin-top: 20px; }
+    .footer-link { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--line-strong); }
+
+    @media (max-width: 1024px) {
+      .hero-grid, .contact, .about-wrap { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 720px) {
+      .header-wrap { height: auto; padding: 10px 0; }
+      .brand img { height: 36px; }
+      nav { gap: 4px; }
+      nav a { font-size: 0.85rem; padding: 7px 8px; }
+      .theme-toggle { width: 36px; height: 36px; }
+      .hero { padding-top: 20px; }
+      .hero-text, .hero-card { padding: 18px; }
+      .logo-main, .tariff-media { min-height: 220px; }
+      .tariff-media { padding: 18px; }
+      .tariff-figure { width: min(100%, calc(184px * 924 / 856)); }
+      .steps, .meta { grid-template-columns: 1fr; }
+      .tariff-title-row { flex-wrap: wrap; }
+      .contact { padding: 18px; }
+      .section { padding: 28px 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+  <link rel="stylesheet" href="theme.css?v=20261108">
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></symbol>
+    <symbol id="i-steps" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4v-4h4v-4h4V8h4"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4 20-7Z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></symbol>
+  </svg>
+
+  <header>
+    <div class="container header-wrap">
+      <a class="brand" href="#top">
+        <picture>
+          <source media="(max-width: 720px)" srcset="./immages/Логотип.png">
+          <img src="./immages/Название.png" alt="Практикант Ру">
+        </picture>
+      </a>
+      <nav>
+        <a href="#about">О нас</a>
+        <a href="#contacts">Контакты</a>
+        <a href="cabinet.html" id="navCabinet" class="nav-cta">Личный кабинет</a>
+        <a href="admin.html" id="navAdmin" class="nav-cta nav-cta--ghost" style="display:none;">Админ-панель</a>
+        <button class="theme-toggle" type="button" aria-label="Сменить тему"></button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero container">
+      <div class="hero-grid">
+        <article class="hero-text">
+          <span class="pill"><span class="live"></span>Полностью дистанционно • По всей России</span>
+          <h1>Закрываем учебную практику <span class="gold">быстро и без поездок</span></h1>
+          <p class="lead">
+            Помогаем студентам пройти производственную практику онлайн: устраиваем в компанию,
+            оформляем нужные документы и сопровождаем до финальной сдачи.
+            Подходит для любой специальности и любого курса.
+          </p>
+          <div class="points">
+            <span class="point">Любая специальность</span>
+            <span class="point">Любой курс</span>
+            <span class="point">Без возрастных ограничений</span>
+          </div>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#contacts">Получить консультацию<svg class="arrow"><use href="#i-arrow"/></svg></a>
+            <a class="btn btn-secondary" href="#how">Узнать процесс</a>
+          </div>
+          <div class="meta">
+            <div class="meta-card">
+              <b>100%</b>
+              <span>онлайн-формат</span>
+            </div>
+            <div class="meta-card">
+              <b>1-2</b>
+              <span>дня на старт</span>
+            </div>
+            <div class="meta-card">
+              <b>24/7</b>
+              <span>связь в мессенджерах</span>
+            </div>
+          </div>
+        </article>
+
+        <aside class="hero-card">
+          <div class="logo-main">
+            <div class="tariff-media" id="tariffMedia">
+              <div class="tariff-figure" id="tariffFigure" role="img" aria-label="Тариф «Старт»">
+                <img class="tariff-base" src="./immages/Тариф.png" alt="" width="924" height="856">
+                <img class="tariff-icon is-active" data-tariff-icon="base" src="./immages/Галочка.png" alt="" style="--w: 200">
+                <img class="tariff-icon" data-tariff-icon="pro" src="./immages/Звезда.png" alt="" style="--w: 221">
+                <img class="tariff-icon" data-tariff-icon="max" src="./immages/Кубок.png" alt="" style="--w: 250">
+              </div>
+            </div>
+          </div>
+          <div class="tariff-title-row">
+            <div class="tariff-title-left">
+              <div class="tariff-title" id="tariffTitle">Старт</div>
+              <div class="tariff-tagline" id="tariffTagline">Самостоятельное прохождение</div>
+            </div>
+            <a class="tariff-choose-link" href="#compare">Как выбрать тариф?</a>
+          </div>
+          <div id="price" class="price">
+            <div class="price-top">
+              <strong id="tariffPrice">700 ₽/нед</strong>
+              <span class="old-price" id="tariffOldPrice"></span>
+            </div>
+            <span id="tariffPriceSub">скидка по промокоду 500 ₽ при оформлении от 4 недель</span>
+          </div>
+          <a class="btn btn-primary" href="#" id="buyTariffBtn">Оформить</a>
+          <div class="tariff-pills" id="tariffPills">
+            <button class="tariff-pill active" type="button" data-tariff-id="base">
+              Старт
+              <small>700 ₽ / неделя</small>
+            </button>
+            <button class="tariff-pill" type="button" data-tariff-id="pro">
+              PRO
+              <small>1 150 ₽ / неделя</small>
+            </button>
+            <button class="tariff-pill" type="button" data-tariff-id="max">
+              Эксперт
+              <small>2 800 ₽ / неделя</small>
+            </button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="about" class="section container">
+      <span class="eyebrow">Кто мы</span>
+      <h2 class="title">О <span class="gold">нас</span></h2>
+      <div class="about-wrap">
+        <article class="about-main">
+          <p>
+            Практика-Онлайн — это сервис сопровождения студентов при прохождении учебной и производственной
+            практики в дистанционном формате.
+          </p>
+          <p>
+            Мы помогаем студентам систематизировать требования учебного заведения, организовать процесс
+            прохождения практики и подготовить необходимую отчётную документацию.
+          </p>
+          <p>
+            Наша задача — упростить сложный и часто формальный процесс практики, сделать его понятным,
+            структурированным и удобным.
+          </p>
+        </article>
+        <div class="about-features">
+          <div class="about-feature"><span class="ico"><svg><use href="#i-steps"/></svg></span>Понятный пошаговый процесс без лишней бюрократии</div>
+          <div class="about-feature"><span class="ico"><svg><use href="#i-globe"/></svg></span>Дистанционный формат по всей России</div>
+          <div class="about-feature"><span class="ico"><svg><use href="#i-shield"/></svg></span>Поддержка и сопровождение до результата</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="compare" class="section container">
+      <span class="eyebrow">Тарифы</span>
+      <h2 class="title">Сравнение <span class="gold">тарифов</span></h2>
+      <p class="subtitle">Выберите нужный блок и сравните тарифы по ключевым возможностям.</p>
+      <div class="compare-wrap">
+        <div class="compare-tabs" id="compareTabs">
+          <button class="compare-tab active" type="button" data-compare-panel="core">Основные возможности</button>
+          <button class="compare-tab" type="button" data-compare-panel="support">Поддержка и сопровождение</button>
+          <button class="compare-tab" type="button" data-compare-panel="level">Уровень сопровождения</button>
+          <button class="compare-tab" type="button" data-compare-panel="result">Финальный результат</button>
+        </div>
+        <div class="compare-panels">
+          <div class="compare-panel active" data-compare-panel-content="core">
+            <div class="compare-scroll">
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Возможности</th>
+                    <th>Старт</th>
+                    <th>PRO</th>
+                    <th>Эксперт</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="compare-row"><td>Подключение к практике</td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td></tr>
+                  <tr class="compare-row"><td>Программа практики</td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td></tr>
+                  <tr class="compare-row"><td>Постоянная связь</td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td></tr>
+                  <tr class="compare-row"><td>Контроль выполнения активности</td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="compare-panel" data-compare-panel-content="support">
+            <div class="compare-scroll">
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Возможности</th>
+                    <th>Старт</th>
+                    <th>PRO</th>
+                    <th>Эксперт</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="compare-row"><td>Поддержка по вопросам</td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td></tr>
+                  <tr class="compare-row"><td>Помощь в заполнении дневника</td><td class="compare-no"><span class="compare-icon no">&#10007;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td></tr>
+                  <tr class="compare-row"><td>Помощь в подготовке отчёта</td><td class="compare-no"><span class="compare-icon no">&#10007;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td></tr>
+                  <tr class="compare-row"><td>Проверка и корректировка</td><td class="compare-no"><span class="compare-icon no">&#10007;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="compare-panel" data-compare-panel-content="level">
+            <div class="compare-scroll">
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Возможности</th>
+                    <th>Старт</th>
+                    <th>PRO</th>
+                    <th>Эксперт</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="compare-row"><td>Индивидуальный подход</td><td class="compare-no"><span class="compare-icon no">&#10007;</span></td><td class="compare-no"><span class="compare-icon no">&#10007;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td></tr>
+                  <tr class="compare-row"><td>Персональный куратор</td><td class="compare-no"><span class="compare-icon no">&#10007;</span></td><td class="compare-no"><span class="compare-icon no">&#10007;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td></tr>
+                  <tr class="compare-row"><td>Полное сопровождение процесса</td><td class="compare-no"><span class="compare-icon no">&#10007;</span></td><td class="compare-no"><span class="compare-icon no">&#10007;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td></tr>
+                  <tr class="compare-row"><td>Приоритетная обработка</td><td class="compare-no"><span class="compare-icon no">&#10007;</span></td><td class="compare-no"><span class="compare-icon no">&#10007;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="compare-panel" data-compare-panel-content="result">
+            <div class="compare-scroll">
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Возможности</th>
+                    <th>Старт</th>
+                    <th>PRO</th>
+                    <th>Эксперт</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="compare-row"><td>Подготовка к сдаче</td><td class="compare-no"><span class="compare-icon no">&#10007;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td></tr>
+                  <tr class="compare-row"><td>Рекомендации по защите</td><td class="compare-no"><span class="compare-icon no">&#10007;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td></tr>
+                  <tr class="compare-row"><td>Максимальная экономия времени</td><td class="compare-no"><span class="compare-icon no">&#10007;</span></td><td class="compare-no"><span class="compare-icon no">&#10007;</span></td><td class="compare-yes"><span class="compare-icon yes">&#10003;</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <p class="compare-note">Выберите тариф под нужный уровень сопровождения — от стартового набора до полного экспертного формата.</p>
+      </div>
+    </section>
+
+    <section id="how" class="section container">
+      <span class="eyebrow">Процесс</span>
+      <h2 class="title">Как это <span class="gold">работает</span></h2>
+      <p class="subtitle">
+        Простой понятный процесс от заявки до финального комплекта документов.
+      </p>
+      <div class="steps">
+        <article class="step" data-n="1">
+          <span class="num">1</span>
+          <h3>Оставляете заявку</h3>
+          <p>Пишете нам в удобный мессенджер и рассказываете про срок, вуз и направление.</p>
+        </article>
+        <article class="step" data-n="2">
+          <span class="num">2</span>
+          <h3>Согласуем детали</h3>
+          <p>Обсуждаем формат, стоимость, дату начала и требования по вашей программе.</p>
+        </article>
+        <article class="step" data-n="3">
+          <span class="num">3</span>
+          <h3>Запускаем практику</h3>
+          <p>Оформляем процесс дистанционно и ведем вас до завершения периода практики.</p>
+        </article>
+        <article class="step" data-n="4">
+          <span class="num">4</span>
+          <h3>Передаем пакет</h3>
+          <p>Вы получаете готовые материалы для сдачи практики в учебное заведение.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="faq" class="section container">
+      <span class="eyebrow">Вопросы</span>
+      <h2 class="title">Частые <span class="gold">вопросы</span></h2>
+      <p class="subtitle">Частые вопросы о прохождении практики через наш сервис.</p>
+      <div class="faq">
+        <article class="faq-item">
+          <button class="faq-question" type="button">
+            <span>Почему нам можно доверять?</span><span>+</span>
+          </button>
+          <div class="faq-answer">
+            Более 50 студентов уже успешно закрыли практику через нас, и по текущей статистике результат составляет 100%.
+          </div>
+        </article>
+        <article class="faq-item">
+          <button class="faq-question" type="button">
+            <span>Отчислят ли меня?</span><span>+</span>
+          </button>
+          <div class="faq-answer">
+            Нет. Вы получаете полный пакет официальных документов и сопровождение по процессу, чтобы корректно закрыть практику перед учебным заведением.
+          </div>
+        </article>
+        <article class="faq-item">
+          <button class="faq-question" type="button">
+            <span>Как стать вашим рефералом?</span><span>+</span>
+          </button>
+          <div class="faq-answer">
+            Стать рефералом можно через личный кабинет на сайте. За каждого приглашенного студента предусмотрено вознаграждение в рублях.
+          </div>
+        </article>
+        <article class="faq-item">
+          <button class="faq-question" type="button">
+            <span>Насколько это законно?</span><span>+</span>
+          </button>
+          <div class="faq-answer">
+            На 100% законно. Мы работаем в рамках законодательства и не нарушаем никаких законов.
+          </div>
+        </article>
+        <article class="faq-item">
+          <button class="faq-question" type="button">
+            <span>Что если практику не примут?</span><span>+</span>
+          </button>
+          <div class="faq-answer">
+            Мы даем финансовую гарантию: если практику не примут, возвращаем 100% оплаченной суммы.
+          </div>
+        </article>
+        <article class="faq-item">
+          <button class="faq-question" type="button">
+            <span>Что говорить в учебном заведении?</span><span>+</span>
+          </button>
+          <div class="faq-answer">
+            Мы даем вам готовые шаблоны для общения с учебным заведением.
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="contacts" class="section container">
+      <div class="contact">
+        <div>
+          <span class="eyebrow">Связь</span>
+          <h2 class="title"><span class="gold">Контакты</span></h2>
+          <p class="subtitle">
+            Напишите или позвоните нам, мы всегда на связи!
+          </p>
+          <div class="hero-actions">
+            <a style="display: none;" class="btn btn-primary" href="https://t.me/AndreyF5D" target="_blank" rel="noopener noreferrer">Telegram</a>
+            <a style="display: none;" class="btn btn-secondary" href="https://vk.com/fjfhfbrht" target="_blank" rel="noopener noreferrer">VK</a>
+          </div>
+        </div>
+        <div class="contact-links">
+          <a style="display: none;" href="tel:+79655555555"><span class="ico"><svg><use href="#i-phone"/></svg></span>+7 (965) 555-55-55<span class="go"><svg><use href="#i-arrow"/></svg></span></a>
+          <a href="mailto:online-praktikant@mail.ru"><span class="ico"><svg><use href="#i-mail"/></svg></span>online-praktikant@mail.ru<span class="go"><svg><use href="#i-arrow"/></svg></span></a>
+          <a href="https://t.me/online_praktika" target="_blank" rel="noopener noreferrer"><span class="ico"><svg><use href="#i-send"/></svg></span>TGK: t.me/online_praktika<span class="go"><svg><use href="#i-arrow"/></svg></span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>
+        © 2026 Практика Онлайн. Обложка-визитка. Все данные на странице могут быть изменены по вашему запросу.
+        <a class="footer-link" href="privacy-policy.html">Документы</a>
+      </p>
+    </div>
+  </footer>
+  <script src="auth.js?v=20260418"></script>
+  <script>
+    const navBtn = document.getElementById('navCabinet');
+    const navAdmin = document.getElementById('navAdmin');
+    const buyBtn = document.getElementById('buyTariffBtn');
+    const faqItems = document.querySelectorAll('.faq-item');
+    const tariffPills = document.querySelectorAll('.tariff-pill');
+    const tariffFigure = document.getElementById('tariffFigure');
+    const tariffIcons = document.querySelectorAll('.tariff-icon');
+    const tariffTitle = document.getElementById('tariffTitle');
+    const tariffTagline = document.getElementById('tariffTagline');
+    const tariffPrice = document.getElementById('tariffPrice');
+    const tariffOldPrice = document.getElementById('tariffOldPrice');
+    const tariffPriceSub = document.getElementById('tariffPriceSub');
+    const compareTabs = document.querySelectorAll('.compare-tab');
+    const comparePanels = document.querySelectorAll('.compare-panel');
+    const TARIFFS = {
+      base: {
+        title: 'Старт',
+        tagline: 'Самостоятельное прохождение',
+        short: 'Старт',
+        weeklyPrice: 700,
+        discount: 500,
+      },
+      pro: {
+        title: 'PRO',
+        tagline: 'Оптимальный выбор',
+        short: 'PRO',
+        weeklyPrice: 1150,
+        discount: 750,
+      },
+      max: {
+        title: 'Эксперт',
+        tagline: 'Под ключ',
+        short: 'Эксперт',
+        weeklyPrice: 2800,
+        discount: 1000,
+      }
+    };
+    let currentTariffId = 'base';
+
+    function setTariff(tariffId) {
+      if (!TARIFFS[tariffId] || tariffId === currentTariffId) return;
+      const next = TARIFFS[tariffId];
+      currentTariffId = tariffId;
+      tariffPills.forEach((pill) => {
+        pill.classList.toggle('active', pill.dataset.tariffId === tariffId);
+      });
+      tariffIcons.forEach((icon) => {
+        icon.classList.toggle('is-active', icon.dataset.tariffIcon === tariffId);
+      });
+      tariffFigure.setAttribute('aria-label', `Тариф «${next.title}»`);
+      tariffTitle.classList.add('fade');
+      tariffTagline.classList.add('fade');
+      tariffPrice.classList.add('fade');
+      tariffOldPrice.classList.add('fade');
+      tariffPriceSub.classList.add('fade');
+      setTimeout(() => {
+        tariffTitle.textContent = next.title;
+        tariffTagline.textContent = next.tagline;
+        tariffPrice.textContent = `${next.weeklyPrice.toLocaleString('ru-RU')} ₽/нед`;
+        tariffOldPrice.textContent = '';
+        tariffPriceSub.textContent = `скидка по промокоду ${next.discount.toLocaleString('ru-RU')} ₽ при оформлении от 4 недель`;
+        tariffTitle.classList.remove('fade');
+        tariffTagline.classList.remove('fade');
+        tariffPrice.classList.remove('fade');
+        tariffOldPrice.classList.remove('fade');
+        tariffPriceSub.classList.remove('fade');
+      }, 180);
+    }
+
+    tariffPills.forEach((pill) => {
+      pill.addEventListener('click', () => {
+        setTariff(pill.dataset.tariffId);
+      });
+    });
+
+    compareTabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const panel = tab.dataset.comparePanel;
+        compareTabs.forEach((btn) => btn.classList.toggle('active', btn === tab));
+        comparePanels.forEach((el) => {
+          el.classList.toggle('active', el.dataset.comparePanelContent === panel);
+        });
+      });
+    });
+
+    (async () => {
+      const user = await Auth.currentUser();
+      const loggedIn = Boolean(user);
+      if (loggedIn && user.role === 'admin') {
+        navBtn.textContent = 'Личный кабинет';
+        navBtn.href = 'cabinet.html';
+        navAdmin.style.display = 'inline-flex';
+      } else if (loggedIn) {
+        navBtn.textContent = 'Личный кабинет';
+        navBtn.href = 'cabinet.html';
+        navAdmin.style.display = 'none';
+      } else {
+        navBtn.textContent = 'Войти';
+        navBtn.href = 'login.html';
+        navAdmin.style.display = 'none';
+      }
+
+      buyBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!loggedIn) {
+          location.href = 'login.html';
+          return;
+        }
+        if (user.role === 'admin') {
+          location.href = 'admin.html';
+          return;
+        }
+        const selected = TARIFFS[currentTariffId];
+        location.href = `apply.html?tariff=${encodeURIComponent(selected.title)}`;
+      });
+    })();
+
+    faqItems.forEach((item) => {
+      const btn = item.querySelector('.faq-question');
+      btn.addEventListener('click', () => {
+        const wasActive = item.classList.contains('active');
+        faqItems.forEach((i) => i.classList.remove('active'));
+        if (!wasActive) item.classList.add('active');
+      });
+    });
+
+  </script>
+</body>
+</html>
